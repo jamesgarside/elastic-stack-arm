@@ -7,12 +7,12 @@ services:
         ELASTICSEARCH_URL: https://es01:9200
         ELASTICSEARCH_HOSTS: https://es01:9200
         ELASTICSEARCH_USERNAME: kibana_system
-        ELASTICSEARCH_PASSWORD: g5OK453yvXk5JBWOPDYj
+        ELASTICSEARCH_PASSWORD: PleaseChangeMe
         ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES: /usr/share/elasticsearch/config/certificates/ca/ca.crt
         SERVER_SSL_ENABLED: "true"
         SERVER_SSL_KEY: /usr/share/elasticsearch/config/certificates/kib01/kib01.key
         SERVER_SSL_CERTIFICATE: /usr/share/elasticsearch/config/certificates/kib01/kib01.crt
-        XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY: 3FbPXiSeRKkfHGhcGrpDfOceikPszkfk5caroGPJt1qdAIFG
+        XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY: PleaseChangeThisEncryptionKey
     networks:
       - elastic
     ports: 
@@ -32,7 +32,7 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
     environment:
       - node.name=es01
-      - cluster.name=sirius
+      - cluster.name=es-docker-cluster
       - discovery.seed_hosts=es02,es03
       - cluster.initial_master_nodes=es01,es02,es03
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
@@ -74,7 +74,7 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
     environment:
       - node.name=es02
-      - cluster.name=sirius
+      - cluster.name=es-docker-cluster
       - discovery.seed_hosts=es01,es03
       - cluster.initial_master_nodes=es01,es02,es03
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
@@ -113,7 +113,7 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
     environment:
       - node.name=es03
-      - cluster.name=sirius
+      - cluster.name=es-docker-cluster
       - discovery.seed_hosts=es01,es02
       - cluster.initial_master_nodes=es01,es02,es03
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
