@@ -1,0 +1,179 @@
+version: '3.8'
+services:
+  kib01:
+    image: jamesgarside/kibana:7.9.3
+    environment:
+        SERVERNAME: localhost
+        ELASTICSEARCH_URL: https://es01:9200
+        ELASTICSEARCH_HOSTS: https://es01:9200
+        ELASTICSEARCH_USERNAME: kibana_system
+        ELASTICSEARCH_PASSWORD: PleaseChangeMe
+        ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES: /usr/share/elasticsearch/config/certificates/ca/ca.crt
+        SERVER_SSL_ENABLED: "true"
+        SERVER_SSL_KEY: /usr/share/elasticsearch/config/certificates/kib01/kib01.key
+        SERVER_SSL_CERTIFICATE: /usr/share/elasticsearch/config/certificates/kib01/kib01.crt
+        XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY: PleaseChangeThisEncryptionKey
+    networks:
+      - elastic
+    ports: 
+      - "5601:5601"
+    deploy:
+      placement:
+        constraints:
+          - "node.hostname==docker-1"
+    secrets:
+      - source: kib01.crt
+        target: /usr/share/elasticsearch/config/certificates/kib01/kib01.crt
+      - source: kib01.key
+        target: /usr/share/elasticsearch/config/certificates/kib01/kib01.key
+      - source: ca.crt
+        target: /usr/share/elasticsearch/config/certificates/ca/ca.crt
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+    environment:
+      - node.name=es01
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true
+      - xpack.security.http.ssl.key=/usr/share/elasticsearch/config/certificates/es01/es01.key
+      - xpack.security.http.ssl.certificate_authorities=/usr/share/elasticsearch/config/certificates/ca/ca.crt
+      - xpack.security.http.ssl.certificate=/usr/share/elasticsearch/config/certificates/es01/es01.crt
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.verification_mode=certificate
+      - xpack.security.transport.ssl.certificate_authorities=/usr/share/elasticsearch/config/certificates/ca/ca.crt
+      - xpack.security.transport.ssl.certificate=/usr/share/elasticsearch/config/certificates/es01/es01.crt
+      - xpack.security.transport.ssl.key=/usr/share/elasticsearch/config/certificates/es01/es01.key
+      - xpack.license.self_generated.type=trial
+      - xpack.monitoring.collection.enabled=true
+      - network.host=0.0.0.0
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+    secrets:
+      - source: es01.crt
+        target: /usr/share/elasticsearch/config/certificates/es01/es01.crt
+      - source: es01.key
+        target: /usr/share/elasticsearch/config/certificates/es01/es01.key
+      - source: ca.crt
+        target: /usr/share/elasticsearch/config/certificates/ca/ca.crt
+    deploy:
+      placement:
+        constraints:
+          - "node.hostname==docker-1"
+    networks:
+      - elastic
+    ports:
+      - target: 9200
+        published: 9200
+        protocol: tcp
+        mode: host
+
+  es02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+    environment:
+      - node.name=es02
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es01,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true
+      - xpack.security.http.ssl.key=/usr/share/elasticsearch/config/certificates/es02/es02.key
+      - xpack.security.http.ssl.certificate_authorities=/usr/share/elasticsearch/config/certificates/ca/ca.crt
+      - xpack.security.http.ssl.certificate=/usr/share/elasticsearch/config/certificates/es02/es02.crt
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.verification_mode=certificate
+      - xpack.security.transport.ssl.certificate_authorities=/usr/share/elasticsearch/config/certificates/ca/ca.crt
+      - xpack.security.transport.ssl.certificate=/usr/share/elasticsearch/config/certificates/es02/es02.crt
+      - xpack.security.transport.ssl.key=/usr/share/elasticsearch/config/certificates/es02/es02.key
+      - xpack.license.self_generated.type=trial
+      - xpack.monitoring.collection.enabled=true
+      - network.host=0.0.0.0
+    volumes:
+      - data02:/usr/share/elasticsearch/data
+    secrets:
+      - source: es02.crt
+        target: /usr/share/elasticsearch/config/certificates/es02/es02.crt
+      - source: es02.key
+        target: /usr/share/elasticsearch/config/certificates/es02/es02.key
+      - source: ca.crt
+        target: /usr/share/elasticsearch/config/certificates/ca/ca.crt
+    deploy:
+      placement:
+        constraints:
+          - "node.hostname==docker-2"
+    depends_on:
+      - es01
+    networks:
+      - elastic
+
+  es03:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+    environment:
+      - node.name=es03
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es01,es02
+      - cluster.initial_master_nodes=es01,es02,es03
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true
+      - xpack.security.http.ssl.key=/usr/share/elasticsearch/config/certificates/es03/es03.key
+      - xpack.security.http.ssl.certificate_authorities=/usr/share/elasticsearch/config/certificates/ca/ca.crt
+      - xpack.security.http.ssl.certificate=/usr/share/elasticsearch/config/certificates/es03/es03.crt
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.verification_mode=certificate
+      - xpack.security.transport.ssl.certificate_authorities=/usr/share/elasticsearch/config/certificates/ca/ca.crt
+      - xpack.security.transport.ssl.certificate=/usr/share/elasticsearch/config/certificates/es03/es03.crt
+      - xpack.security.transport.ssl.key=/usr/share/elasticsearch/config/certificates/es03/es03.key
+      - xpack.license.self_generated.type=trial
+      - xpack.monitoring.collection.enabled=true
+      - network.host=0.0.0.0
+    volumes:
+      - data03:/usr/share/elasticsearch/data
+    secrets:
+      - source: es03.crt
+        target: /usr/share/elasticsearch/config/certificates/es03/es03.crt
+      - source: es03.key
+        target: /usr/share/elasticsearch/config/certificates/es03/es03.key
+      - source: ca.crt
+        target: /usr/share/elasticsearch/config/certificates/ca/ca.crt
+
+    deploy:
+      placement:
+        constraints:
+          - "node.hostname==docker-3"
+    depends_on:
+      - es01
+    networks:
+      - elastic
+
+volumes:
+  data01:
+  data02:
+  data03:
+
+secrets:
+  ca.crt:
+    external: true
+  es01.crt:
+    external: true
+  es01.key:
+    external: true
+  es02.crt:
+    external: true
+  es02.key:
+    external: true
+  es03.crt:
+    external: true
+  es03.key:
+    external: true
+  kib01.crt:
+    external: true
+  kib01.key:
+    external: true
+
+networks:
+  elastic:
+    driver: overlay
