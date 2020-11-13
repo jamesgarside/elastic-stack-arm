@@ -1,2 +1,3 @@
 remove-stack.sh
 stack-passwords.txt
+docker-compose.yml
