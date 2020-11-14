@@ -3,6 +3,11 @@ This method is based off the Offical Elastic deployment guide with some modifica
 - Uses local directory rather than Docker volume to store certs
 - Uses Docker secrets to store crypt if using Docker Swarm
 
+## TO DO
+- [x] Create 3 node compose 
+- [ ] Move from Internal Node Monitoring to Metricbeat
+- [ ] Add functionality to build script allowing user to select cluster size (ie. Count of Nodes + Kibana instaces)
+
 ## How To
 1. Update `instances.yml`
 2. Run gen script based on your Docker deployment.
