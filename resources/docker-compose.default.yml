@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   kib01:
-    image: jamesgarside/kibana:
+    image: jamesgarside/kibana:7.10.0
     environment:
         SERVERNAME: localhost
         ELASTICSEARCH_URL: https://es01:9200
@@ -23,7 +23,7 @@ services:
     volumes:
       - /etc/ssl/sirius/:/usr/share/kibana/config/certificates
   es01:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
     environment:
       - node.name=es01
       - cluster.name=es-docker-cluster
@@ -60,7 +60,7 @@ services:
         mode: host
 
   es02:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
     environment:
       - node.name=es02
       - cluster.name=es-docker-cluster
@@ -94,7 +94,7 @@ services:
       - elastic
 
   es03:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
     environment:
       - node.name=es03
       - cluster.name=es-docker-cluster
