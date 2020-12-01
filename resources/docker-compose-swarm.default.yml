@@ -177,4 +177,4 @@ secrets:
 networks:
   elastic:
     driver: overlay
-    external: true
+    external: false
